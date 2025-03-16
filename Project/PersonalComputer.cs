@@ -14,5 +14,17 @@ namespace Project
         {
             OperatingSystem = operatingSystem;
         }
+
+        public override void TurnOn()
+        {
+            if (OperatingSystem == null || OperatingSystem == "")
+                throw new EmptyBatteryException();
+            base.TurnOn();
+        }
+    }
+
+    public class EmptySystemException : Exception
+    {
+        public EmptySystemException() : base("Can't launch PC that dosen't have operating system") { }
     }
 }
