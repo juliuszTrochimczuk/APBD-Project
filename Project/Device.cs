@@ -8,11 +8,11 @@ namespace Project
 {
     public abstract class Device
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public bool IsTurnedOn { get; set; }
+        protected string Id { get; set; }
+        protected string Name { get; set; }
+        protected bool IsTurnedOn { get; set; }
 
-        public Device(string id, string name, bool isTurnedOn)
+        protected Device(string id, string name, bool isTurnedOn)
         {
             this.Id = id;
             this.Name = name;
