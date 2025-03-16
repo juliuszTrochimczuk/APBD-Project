@@ -12,9 +12,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="bin\Debug\net8.0\input.txt">
+    <Resource Include="input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="bin\Debug\net8.0\" />
   </ItemGroup>
 
 </Project>
