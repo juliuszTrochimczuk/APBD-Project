@@ -15,7 +15,7 @@ namespace Project
         public EmbeddedDevice(string id, string name, string ipAdress, string networkName) : base(id, name, false)
         {
             //Regex expression for IPv4
-            Regex regex = new("\"(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\\\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\"");
+            Regex regex = new("[0-9]{0,3}[.][0-9]{0,3}[.][0-9]{0,3}");
             if (!regex.IsMatch(ipAdress))
                 throw new ArgumentException();
 
