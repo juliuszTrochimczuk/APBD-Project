@@ -18,5 +18,9 @@ namespace Project
             this.Name = name;
             this.IsTurnedOn = isTurnedOn;
         }
+
+        public virtual void TurnOn() => IsTurnedOn = true;
+
+        public virtual void TurnOff() => IsTurnedOn = false;
     }
 }
