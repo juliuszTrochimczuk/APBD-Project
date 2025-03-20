@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,51 +10,27 @@ namespace Project
     public class DeviceManager
     {
         private List<Device> allDevices = new();
+        private readonly string filePath;
 
         public DeviceManager(string filePath) 
         {
-            if (!File.Exists(filePath)) throw new FileNotFoundException();
+            this.filePath = filePath;
+
+            if (!File.Exists(filePath)) 
+                throw new FileNotFoundException();
 
             foreach (string line in File.ReadLines(filePath))
             {
-                string[] values = line.Split(',');
-                if (values[0].Contains("SW") && (values[2] == "true" || values[2] == "false"))
+                try 
                 {
-                    values[3] = values[3].Remove(values[3].Length - 1);
-                    int batteryLevel = int.Parse(values[3]);
-                    bool isSwitchOn = values[2] == "true";
-                    Smartwatch smartwatch = new Smartwatch(values[0], values[1], isSwitchOn, batteryLevel);
-                    allDevices.Add(smartwatch);
+                    Device device = CreateDeviceBasedOnText(line);
+                    if (device != null)
+                        allDevices.Add(device);
                 }
-                else if (values[0].Contains('P') && (values[2] == "true" || values[2] == "false"))
+                catch (ArgumentException e)
                 {
-                    bool isSwitchOn = values[2] == "true";
-                    string operatingSystem;
-                    try
-                    {
-                        operatingSystem = values[3];
-                    }
-                    catch (IndexOutOfRangeException e)
-                    {
-                        operatingSystem = "";
-                    }
-                    PersonalComputer pc = new PersonalComputer(values[0], values[1], isSwitchOn, operatingSystem);
-                    allDevices.Add(pc);
+                    Console.WriteLine(e.Message);
                 }
-                else if (values[0].Contains("ED"))
-                {
-                    try
-                    {
-                        EmbeddedDevice embedded = new EmbeddedDevice(values[0], values[1], values[2], values[3]);
-                        allDevices.Add(embedded);
-                    }
-                    catch (ArgumentException e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
-                }
-                else
-                    continue;
             }
         }
 
@@ -62,6 +39,15 @@ namespace Project
             if (allDevices.Count == 15)
                 return;
             allDevices.Add(newDevice);
+        }
+
+        public void AddDevice(string specification)
+        {
+            if (allDevices.Count == 15)
+                return;
+            Device device = CreateDeviceBasedOnText(specification);
+            if (device != null)
+                allDevices.Add(device);
         }
 
         public void RemoveDevice(Device newDevice) => allDevices.Remove(newDevice);
@@ -74,7 +60,25 @@ namespace Project
 
         }
 
-        public void TurnOnDevice(int deviceIndex) => allDevices[deviceIndex].TurnOn();
+        public void TurnOnDevice(int deviceIndex)
+        {
+            try
+            {
+                allDevices[deviceIndex].TurnOn();
+            } 
+            catch (EmptyBatteryException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (EmptySystemException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (ConnectionException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
 
         public void TurnOffDevice(int deviceIndex) => allDevices[deviceIndex].TurnOff();
 
@@ -82,6 +86,45 @@ namespace Project
         {
             foreach (Device device in allDevices)
                 Console.WriteLine(device.ToString());
+        }
+
+        public void SaveDevicesToFile()
+        {
+            if (!File.Exists(filePath))
+                throw new FileNotFoundException();
+
+            string messageToWrite = "";
+            foreach (Device device in allDevices)
+                messageToWrite += device.ToString() + "\n";
+            File.WriteAllText(filePath, messageToWrite);
+        }
+
+        private Device CreateDeviceBasedOnText(string text)
+        {
+            Device device = null;
+            string[] values = text.Split(',');
+            if (values[0].Contains("SW"))
+            {
+                values[3] = values[3].Remove(values[3].Length - 1);
+                device = new Smartwatch(values[0], values[1], values[2] == "true", int.Parse(values[3]));
+            }
+            else if (values[0].Contains('P'))
+            {
+                string operatingSystem;
+                try
+                {
+                    operatingSystem = values[3];
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    operatingSystem = "";
+                }
+                device = new PersonalComputer(values[0], values[1], values[2] == "true", operatingSystem);
+            }
+            else if (values[0].Contains("ED"))
+                device = new EmbeddedDevice(values[0], values[1], values[2], values[3]);
+
+            return device;
         }
     }
 }

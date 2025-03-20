@@ -17,21 +17,14 @@ namespace Project
 
         public override void TurnOn()
         {
-            try
-            {
-                if (OperatingSystem == null || OperatingSystem == "")
-                    throw new EmptySystemException();
-                base.TurnOn();
-            }
-            catch (EmptySystemException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            if (OperatingSystem == null || OperatingSystem == "")
+                throw new EmptySystemException();
+            base.TurnOn();
         }
 
         public override string ToString()
         {
-            return "Id: " + Id + "; Name: " + Name + "; Is turned on: " + IsTurnedOn + "; Operating System: " + OperatingSystem;
+            return Id + "," + Name + "," + IsTurnedOn + "," + OperatingSystem;
         }
     }
 

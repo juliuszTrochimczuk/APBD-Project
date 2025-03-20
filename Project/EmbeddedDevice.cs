@@ -25,20 +25,13 @@ namespace Project
 
         public override void TurnOn()
         {
-            try
-            {
-                Connect();
-                base.TurnOn();
-            }
-            catch (ConnectionException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            Connect();
+            base.TurnOn();
         }
 
         public override string ToString()
         {
-            return "Id: " + Id + "; Name: " + Name + "; Is turned on: " + IsTurnedOn + "; Ip adress: " + IpAdress + "; Network name: " + NetworkName;
+            return Id + "," + Name + "," + IsTurnedOn + "," + IpAdress + "," + NetworkName;
         }
 
         private void Connect()

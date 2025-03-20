@@ -36,22 +36,15 @@ namespace Project
 
         public override void TurnOn()
         {
-            try
-            {
-                if (_batteryLevel == 0)
-                    throw new EmptyBatteryException();
-                base.TurnOn();
-                BatteryLevel -= 10;
-            }
-            catch (EmptyBatteryException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            if (_batteryLevel == 0)
+                throw new EmptyBatteryException();
+            base.TurnOn();
+            BatteryLevel -= 10;
         }
 
         public override string ToString()
         {
-            return "Id: " + Id + "; Name: " + Name + "; Is turned on: " + IsTurnedOn + "; Battery level: " + BatteryLevel + "%";
+            return Id + "," + Name + "," + IsTurnedOn + "," + BatteryLevel + "%";
         }
     }
 
