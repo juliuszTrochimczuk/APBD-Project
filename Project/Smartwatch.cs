@@ -9,7 +9,7 @@ namespace Project
     public class Smartwatch : Device, IPowerNotifier
     {
         private int _batteryLevel;
-        private int BatteryLevel
+        public int BatteryLevel
         {
             get => _batteryLevel;
             set

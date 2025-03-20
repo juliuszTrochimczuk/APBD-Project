@@ -9,15 +9,26 @@ namespace Project
 {
     public class EmbeddedDevice : Device
     {
-        private string IpAdress { get; set; }
-        private string NetworkName { get; set; }
+        private Regex regex;
+
+        private string ipAdress;
+        public string IpAdress
+        {
+            get => ipAdress;
+            set
+            {
+                if (regex.IsMatch(value))
+                    ipAdress = value;
+                else
+                    throw new ArgumentException();
+            }
+        }
+        public string NetworkName { get; set; }
 
         public EmbeddedDevice(string id, string name, string ipAdress, string networkName) : base(id, name, false)
         {
             //Regex expression for IPv4
-            Regex regex = new("[0-9]{0,3}[.][0-9]{0,3}[.][0-9]{0,3}");
-            if (!regex.IsMatch(ipAdress))
-                throw new ArgumentException();
+            regex = new("[0-9]{0,3}[.][0-9]{0,3}[.][0-9]{0,3}");
 
             IpAdress = ipAdress;
             NetworkName = networkName;
@@ -31,12 +42,12 @@ namespace Project
 
         public override string ToString()
         {
-            return Id + "," + Name + "," + IsTurnedOn + "," + IpAdress + "," + NetworkName;
+            return Id + "," + Name + "," + IpAdress + "," + NetworkName;
         }
 
         private void Connect()
         {
-            if (NetworkName.Contains("MD Ltd."))
+            if (!NetworkName.Contains("MD Ltd."))
                 throw new ConnectionException();
         }
     }

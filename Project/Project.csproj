@@ -9,9 +9,13 @@
 
   <ItemGroup>
     <None Remove="input.txt" />
+    <None Remove="test_input.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="test_input.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

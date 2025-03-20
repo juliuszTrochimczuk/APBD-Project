@@ -10,11 +10,16 @@ namespace Project
     public class DeviceManager
     {
         private List<Device> allDevices = new();
+        public List<Device> AllDevices => allDevices;
+
         private readonly string filePath;
+
+        public DeviceManager() { }
 
         public DeviceManager(string filePath) 
         {
             this.filePath = filePath;
+            Console.WriteLine(filePath);
 
             if (!File.Exists(filePath)) 
                 throw new FileNotFoundException();
@@ -23,6 +28,7 @@ namespace Project
             {
                 try 
                 {
+
                     Device device = CreateDeviceBasedOnText(line);
                     if (device != null)
                         allDevices.Add(device);
@@ -55,9 +61,27 @@ namespace Project
         public void RemoveDevice(int deviceIndex) => allDevices.RemoveAt(deviceIndex);
 
         //WHAT THE HELL IT SUPPOSED TO DO
-        public void EditDeviceData()
+        public void EditDeviceData(int deviceIndex, Device template)
         {
-
+            if (template is Smartwatch sw)
+            {
+                Smartwatch targetSW = (Smartwatch)allDevices[deviceIndex];
+                targetSW.BatteryLevel = sw.BatteryLevel;
+            }
+            else if (template is PersonalComputer pc)
+            {
+                PersonalComputer targetPC = (PersonalComputer)allDevices[deviceIndex];
+                targetPC.OperatingSystem = pc.OperatingSystem;
+            }
+            else if (template is EmbeddedDevice ed)
+            {
+                EmbeddedDevice targetED = (EmbeddedDevice)allDevices[deviceIndex];
+                targetED.IpAdress = ed.IpAdress;
+                targetED.NetworkName = ed.NetworkName;
+            }
+            allDevices[deviceIndex].Id = template.Id;
+            allDevices[deviceIndex].Name = template.Name;
+            allDevices[deviceIndex].IsTurnedOn = template.IsTurnedOn;
         }
 
         public void TurnOnDevice(int deviceIndex)
@@ -99,7 +123,7 @@ namespace Project
             File.WriteAllText(filePath, messageToWrite);
         }
 
-        private Device CreateDeviceBasedOnText(string text)
+        public Device CreateDeviceBasedOnText(string text)
         {
             Device device = null;
             string[] values = text.Split(',');
