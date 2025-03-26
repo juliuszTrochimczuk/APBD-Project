@@ -25,10 +25,7 @@ namespace Project
         public Smartwatch(string id, string name, bool isTurnedOn, int batteryLevel) : base(id, name, isTurnedOn)
         {
             if (batteryLevel < 20) 
-            {
                 Notify();
-                return;
-            }
             BatteryLevel = batteryLevel;
         }
 
@@ -42,10 +39,7 @@ namespace Project
             BatteryLevel -= 10;
         }
 
-        public override string ToString()
-        {
-            return Id + "," + Name + "," + IsTurnedOn + "," + BatteryLevel + "%";
-        }
+        public override string ToString() => Id + "," + Name + "," + IsTurnedOn + "," + BatteryLevel + "%";
     }
 
     public class EmptyBatteryException : Exception

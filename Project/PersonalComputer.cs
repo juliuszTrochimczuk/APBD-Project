@@ -22,10 +22,7 @@ namespace Project
             base.TurnOn();
         }
 
-        public override string ToString()
-        {
-            return Id + "," + Name + "," + IsTurnedOn + "," + OperatingSystem;
-        }
+        public override string ToString() => Id + "," + Name + "," + IsTurnedOn + "," + OperatingSystem;
     }
 
     public class EmptySystemException : Exception

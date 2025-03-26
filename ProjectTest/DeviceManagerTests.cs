@@ -16,7 +16,7 @@ namespace ProjectTest
         public void TestCreationOfDeviceTest()
         {
             string filePath = "..\\..\\..\\test_input.txt";
-            DeviceManager deviceManager = new(filePath);
+            DeviceManager deviceManager = DeviceManager.Factory.CreateDeviceManager(filePath);
             Assert.True(deviceManager.AllDevices.Count() == 5);
         }
     }

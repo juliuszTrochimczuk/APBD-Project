@@ -9,7 +9,8 @@ namespace Project
 {
     public class EmbeddedDevice : Device
     {
-        private Regex regex;
+        //Regex expression for IPv4
+        private Regex regex = new("[0-9]{0,3}[.][0-9]{0,3}[.][0-9]{0,3}");
 
         private string ipAdress;
         public string IpAdress
@@ -20,16 +21,13 @@ namespace Project
                 if (regex.IsMatch(value))
                     ipAdress = value;
                 else
-                    throw new ArgumentException();
+                    throw new WrongIPExcpection();
             }
         }
         public string NetworkName { get; set; }
 
-        public EmbeddedDevice(string id, string name, string ipAdress, string networkName) : base(id, name, false)
+        public EmbeddedDevice(string id, string name, bool isTurnedOn, string ipAdress, string networkName) : base(id, name, isTurnedOn)
         {
-            //Regex expression for IPv4
-            regex = new("[0-9]{0,3}[.][0-9]{0,3}[.][0-9]{0,3}");
-
             IpAdress = ipAdress;
             NetworkName = networkName;
         }
@@ -40,10 +38,7 @@ namespace Project
             base.TurnOn();
         }
 
-        public override string ToString()
-        {
-            return Id + "," + Name + "," + IpAdress + "," + NetworkName;
-        }
+        public override string ToString() => Id + "," + Name + "," + IsTurnedOn + ',' + IpAdress + "," + NetworkName;
 
         private void Connect()
         {
@@ -55,5 +50,10 @@ namespace Project
     public class ConnectionException : Exception 
     {
         public ConnectionException() : base("Network name is wrong") { }
+    }
+
+    public class WrongIPExcpection : Exception
+    {
+        public WrongIPExcpection() : base("The given IP is not IPv4 Standard") { }
     }
 }
