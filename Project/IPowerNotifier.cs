@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace Project
 {
+    /// <summary>
+    /// Interface used to display power notifier 
+    /// </summary>
     public interface IPowerNotifier
     {
+        /// <summary>
+        /// Notification about lack of power
+        /// </summary>
         public void Notify();
     }
 }

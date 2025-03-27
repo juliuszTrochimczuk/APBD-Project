@@ -8,10 +8,22 @@ using System.Transactions;
 
 namespace Project
 {
+    /// <summary>
+    /// Class dedicated to manage all of the devices
+    /// </summary>
     public class DeviceManager
     {
+
+        /// <summary>
+        /// Class dedicated to create new instance of DeviceManager
+        /// </summary>
         public class Factory
         {
+            /// <summary>
+            /// This method creates the instance of DeviceManager
+            /// </summary>
+            /// <param name="filePath">Path to the file where devices are stored</param>
+            /// <returns>Instance of DeviceManager with loaded devices</returns>
             public static DeviceManager CreateDeviceManager(string filePath)
             {
                 FileController fileController = new FileController(filePath);
@@ -20,8 +32,11 @@ namespace Project
                 {
                     try
                     {
-                        if (deviceManager.TryCreatingDeviceBasedOnText(fileController.GetFileLine(i), out Device device))
-                            deviceManager.AddDevice(device);
+                        if (!fileController.GetFileLine(i, out string deviceSpecification))
+                            continue;
+                        if (!deviceManager.TryCreatingDeviceBasedOnText(deviceSpecification, out Device device))
+                            continue;
+                        deviceManager.AddDevice(device);
                     }
                     catch (WrongIPExcpection ex)
                     {
@@ -38,18 +53,39 @@ namespace Project
 
         private DeviceManager(FileController fileController) => this.fileController = fileController;
 
+        /// <summary>
+        /// Adding new device to DeviceManager
+        /// </summary>
         public void AddDevice(Device newDevice) => TryAddingDevice(newDevice);
 
+
+        /// <summary>
+        /// Adding new device to DeviceManager
+        /// </summary>
+        /// <param name="specification">Raw specification of device (like with input data)</param>
         public void AddDevice(string specification)
         {
             if (TryCreatingDeviceBasedOnText(specification, out Device device))
                 TryAddingDevice(device);
         }
 
+
+        /// <summary>
+        /// Remove device from DeviceManager
+        /// </summary>
         public void RemoveDevice(Device newDevice) => allDevices.Remove(newDevice);
 
+        /// <summary>
+        /// Remove device from DeviceManager
+        /// </summary>
+        /// <param name="deviceIndex">Index of device that it's stored in list</param>
         public void RemoveDevice(int deviceIndex) => allDevices.RemoveAt(deviceIndex);
 
+        /// <summary>
+        /// Method used to edit device that is stored in DeviceManager
+        /// </summary>
+        /// <param name="deviceIndex">Index of device that it's stored in list</param>
+        /// <param name="template">New Device that contains all of new informations to edit</param>
         public void EditDeviceData(int deviceIndex, Device template)
         {
             if (template is Smartwatch sw)
@@ -80,6 +116,10 @@ namespace Project
             allDevices[deviceIndex].IsTurnedOn = template.IsTurnedOn;
         }
 
+        /// <summary>
+        /// Turn on the device. Also catch all of the errors that might appear.
+        /// </summary>
+        /// <param name="deviceIndex">Index of the device that it's stored in the list</param>
         public void TurnOnDevice(int deviceIndex)
         {
             try
@@ -100,14 +140,24 @@ namespace Project
             }
         }
 
+        /// <summary>
+        /// Turn of the device
+        /// </summary>
+        /// <param name="deviceIndex">Index of the device that it's stored in the list</param>
         public void TurnOffDevice(int deviceIndex) => allDevices[deviceIndex].TurnOff();
 
+        /// <summary>
+        /// Show all of the devices that DeviceManager contains
+        /// </summary>
         public void ShowAllDevices()
         {
             foreach (Device device in allDevices)
                 Console.WriteLine(device.ToString());
         }
 
+        /// <summary>
+        /// Save all of the connected devices to the file (the same one as the date was read from)
+        /// </summary>
         public void SaveDevicesToFile()
         {
             string messageToWrite = "";
@@ -116,6 +166,12 @@ namespace Project
             fileController.SaveToFile(messageToWrite);
         }
 
+        /// <summary>
+        /// Create a Device based on text specification
+        /// </summary>
+        /// <param name="text">Text specification of the device</param>
+        /// <param name="createdDevice">Created device</param>
+        /// <returns>Returns bool that shows if device was created successfuly</returns>
         private bool TryCreatingDeviceBasedOnText(string text, out Device createdDevice)
         {
             createdDevice = null;
@@ -169,6 +225,10 @@ namespace Project
             return false;
         }
 
+        /// <summary>
+        /// Add new device to the list
+        /// </summary>
+        /// <returns>Returns bool that shows if you successfuly added the device</returns>
         private bool TryAddingDevice(Device deviceToAdd)
         {
             if (allDevices.Count == 15)

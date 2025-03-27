@@ -6,9 +6,16 @@ using System.Threading.Tasks;
 
 namespace Project
 {
+    /// <summary>
+    /// Representation of smartwatch as a device
+    /// </summary>
     public class Smartwatch : Device, IPowerNotifier
     {
         private int _batteryLevel;
+
+        /// <summary>
+        /// Battery level property. Clamps potential value [0, 100]
+        /// </summary>
         public int BatteryLevel
         {
             get => _batteryLevel;
@@ -16,6 +23,8 @@ namespace Project
             {
                 if (value < 0)
                     value = 0;
+                if (value < 20)
+                    Notify();
                 else if (value > 100)
                     value = 100;
                 _batteryLevel = value;
@@ -29,8 +38,10 @@ namespace Project
             BatteryLevel = batteryLevel;
         }
 
+        /// <inheritdoc/>
         public void Notify() => Console.WriteLine("Battery is too low");
 
+        /// <inheritdoc/>
         public override void TurnOn()
         {
             if (_batteryLevel == 0)
@@ -42,6 +53,10 @@ namespace Project
         public override string ToString() => Id + "," + Name + "," + IsTurnedOn + "," + BatteryLevel + "%";
     }
 
+
+    /// <summary>
+    /// Exception shows low battery status
+    /// </summary>
     public class EmptyBatteryException : Exception
     {
         public EmptyBatteryException() : base("Can't turned on Smartwatch with 0% battery") { }
