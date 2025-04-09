@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Controllers;
+using Controllers.FileControllers;
+using Controllers.Parsers;
 
 namespace UnitTests
 {
     public class DeviceManagerTests
     {
-        const string filePath = "..\\..\\..\\test_input.txt";
-
         [Fact]
         public void TestCreationOfDeviceTest()
         {
             string filePath = "..\\..\\..\\test_input.txt";
-            DeviceManager deviceManager = DeviceManager.Factory.CreateDeviceManager(filePath);
+            DeviceManager deviceManager = Factory.CreateDeviceManager(new TxtFileController(filePath), new StringParser());
             Assert.True(deviceManager.AllDevices.Count() == 5);
         }
     }
