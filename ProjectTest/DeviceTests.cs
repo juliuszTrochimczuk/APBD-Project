@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Project;
+using Devices;
 
-namespace ProjectTest
+namespace Tests
 {
     public class DeviceTests
     {
@@ -21,7 +21,7 @@ namespace ProjectTest
         [Fact]
         public void TestTurningOnSmartwatchWithoutBattery()
         {
-            Smartwatch smartwatch = new Smartwatch("P-1", "IPhone", false, 15);
+            Smartwatch smartwatch = new("P-1", "IPhone", false, 15);
             try
             {
                 smartwatch.TurnOn();
@@ -60,7 +60,7 @@ namespace ProjectTest
             EmbeddedDevice device = null;
             try
             {
-                device = new EmbeddedDevice("ED-3","Pi4","whatisIP","MyWifiName");
+                device = new("ED-3","Pi4", false,"whatisIP","MyWifiName");
             }
             catch (ArgumentException)
             {
@@ -74,7 +74,7 @@ namespace ProjectTest
             EmbeddedDevice device = null;
             try
             {
-                device = new EmbeddedDevice("ED-1", "Pi3", "192.168.1.44", "MD Ltd.Wifi - 1");
+                device = new("ED-1", "Pi3", true,"192.168.1.44", "MD Ltd.Wifi - 1");
             }
             catch (ArgumentException)
             {
@@ -85,7 +85,7 @@ namespace ProjectTest
         [Fact]
         public void TestTurningOnEmbeddedDeviceWithCorrectNetworkName()
         {
-            EmbeddedDevice device = new("ED-1", "Pi3", "192.168.1.44", "MD Ltd.Wifi - 1");
+            EmbeddedDevice device = new("ED-1", "Pi3", false, "192.168.1.44", "MD Ltd.Wifi - 1");
             device.TurnOn();
             Assert.True(device.IsTurnedOn);
         }
@@ -93,7 +93,7 @@ namespace ProjectTest
         [Fact]
         public void TestTurningOnEmbeddedDeviceWithWrongNetworkName()
         {
-            EmbeddedDevice device = new("ED-1", "Pi3", "192.168.1.44", "Wifi");
+            EmbeddedDevice device = new("ED-1", "Pi3", false, "192.168.1.44", "Wifi");
             try
             {
                 device.TurnOn();

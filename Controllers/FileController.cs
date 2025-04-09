@@ -1,18 +1,24 @@
-﻿namespace Project
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Controllers
 {
     /// <summary>
-    /// Class resposible for controlling the file operation
+    /// Abstract class resposible for controlling the file operation
     /// </summary>
-    public class FileController
+    public abstract class FileController
     {
-        private readonly string filePath;
-        private string[] fileContent;
+        protected readonly string filePath;
+        protected string[] fileContent;
 
         /// <summary>
         /// Checks if the File Exists (if not then creates new file with approprate output to console). Reads from file to private variable
         /// </summary>
         /// <param name="filePath">Path to the file</param>
-        public FileController(string filePath)
+        protected FileController(string filePath)
         {
             if (!File.Exists(filePath))
             {
@@ -26,7 +32,7 @@
         /// <summary>
         /// Gives the length of the file content
         /// </summary>
-        public int FileLinesCount() => fileContent.Length;
+        public abstract int FileLinesCount();
 
         /// <summary>
         /// Returns specific line in file
@@ -34,28 +40,12 @@
         /// <param name="line">index of the line in text</param>
         /// <param name="content">Content of that line</param>
         /// <returns>Returns bool that shows if asked line exists</returns>
-        public bool GetFileLine(int line, out string content) 
-        {
-            try
-            {
-                content = fileContent[line];
-                return true;
-            }
-            catch (IndexOutOfRangeException)
-            {
-                content = null;
-                return false;
-            }
-        }
+        public abstract bool GetFileLine(int line, out string content);
 
         /// <summary>
         /// Saves text to file and overrides active content
         /// </summary>
         /// <param name="newText">Text that will be written to the file</param>
-        public void SaveToFile(string newText)
-        {
-            File.WriteAllText(filePath, newText);
-            fileContent = newText.Split('\n');
-        }
+        public abstract void SaveToFile(string newText);
     }
 }

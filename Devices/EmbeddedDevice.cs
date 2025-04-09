@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Project
+namespace Devices
 {
     /// <summary>
     /// Representation of embdedded device as a device

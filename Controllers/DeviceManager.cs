@@ -5,8 +5,9 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using Devices;
 
-namespace Project
+namespace Controllers
 {
     /// <summary>
     /// Class dedicated to manage all of the devices
@@ -26,7 +27,7 @@ namespace Project
             /// <returns>Instance of DeviceManager with loaded devices</returns>
             public static DeviceManager CreateDeviceManager(string filePath)
             {
-                FileController fileController = new FileController(filePath);
+                TxtFileController fileController = new TxtFileController(filePath);
                 DeviceManager deviceManager = new(fileController);
                 for (int i = 0; i < fileController.FileLinesCount(); i++)
                 {
@@ -47,11 +48,11 @@ namespace Project
             }
         }
 
-        private FileController fileController;
+        private TxtFileController fileController;
         private List<Device> allDevices = new();
         public List<Device> AllDevices => allDevices;
 
-        private DeviceManager(FileController fileController) => this.fileController = fileController;
+        private DeviceManager(TxtFileController fileController) => this.fileController = fileController;
 
         /// <summary>
         /// Adding new device to DeviceManager
