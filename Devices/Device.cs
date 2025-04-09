@@ -28,9 +28,9 @@ namespace Devices
 
         protected Device(string id, string name, bool isTurnedOn)
         {
-            this.Id = id;
-            this.Name = name;
-            this.IsTurnedOn = isTurnedOn;
+            Id = id;
+            Name = name;
+            IsTurnedOn = isTurnedOn;
         }
 
         /// <summary>

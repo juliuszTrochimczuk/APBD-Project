@@ -1,4 +1,4 @@
-﻿namespace Controllers
+﻿namespace Controllers.FileControllers
 {
     /// <summary>
     /// Class resposible for controlling the file operation from txt file type
@@ -12,7 +12,7 @@
         public override int FileLinesCount() => fileContent.Length;
 
         /// <inheritdoc/>
-        public override bool GetFileLine(int line, out string content) 
+        public override bool GetFileLine(int line, out string content)
         {
             try
             {

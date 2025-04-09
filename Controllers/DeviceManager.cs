@@ -5,6 +5,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using Controllers.FileControllers;
+using Controllers.Parsers;
 using Devices;
 
 namespace Controllers
@@ -14,45 +16,15 @@ namespace Controllers
     /// </summary>
     public class DeviceManager
     {
-
-        /// <summary>
-        /// Class dedicated to create new instance of DeviceManager
-        /// </summary>
-        public class Factory
-        {
-            /// <summary>
-            /// This method creates the instance of DeviceManager
-            /// </summary>
-            /// <param name="filePath">Path to the file where devices are stored</param>
-            /// <returns>Instance of DeviceManager with loaded devices</returns>
-            public static DeviceManager CreateDeviceManager(string filePath)
-            {
-                TxtFileController fileController = new TxtFileController(filePath);
-                DeviceManager deviceManager = new(fileController);
-                for (int i = 0; i < fileController.FileLinesCount(); i++)
-                {
-                    try
-                    {
-                        if (!fileController.GetFileLine(i, out string deviceSpecification))
-                            continue;
-                        if (!deviceManager.TryCreatingDeviceBasedOnText(deviceSpecification, out Device device))
-                            continue;
-                        deviceManager.AddDevice(device);
-                    }
-                    catch (WrongIPExcpection ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-                return deviceManager;
-            }
-        }
-
-        private TxtFileController fileController;
+        private FileController fileController;
+        private IParser parser;
         private List<Device> allDevices = new();
         public List<Device> AllDevices => allDevices;
 
-        private DeviceManager(TxtFileController fileController) => this.fileController = fileController;
+        public DeviceManager(FileController fileController, IParser parser)
+        {
+            this.fileController = fileController;
+        }
 
         /// <summary>
         /// Adding new device to DeviceManager
@@ -66,8 +38,8 @@ namespace Controllers
         /// <param name="specification">Raw specification of device (like with input data)</param>
         public void AddDevice(string specification)
         {
-            if (TryCreatingDeviceBasedOnText(specification, out Device device))
-                TryAddingDevice(device);
+            if (parser.TryParsing(specification, out Device newDevice))
+                TryAddingDevice(newDevice);
         }
 
 
@@ -165,65 +137,6 @@ namespace Controllers
             foreach (Device device in allDevices)
                 messageToWrite += device.ToString() + "\n";
             fileController.SaveToFile(messageToWrite);
-        }
-
-        /// <summary>
-        /// Create a Device based on text specification
-        /// </summary>
-        /// <param name="text">Text specification of the device</param>
-        /// <param name="createdDevice">Created device</param>
-        /// <returns>Returns bool that shows if device was created successfuly</returns>
-        private bool TryCreatingDeviceBasedOnText(string text, out Device createdDevice)
-        {
-            createdDevice = null;
-            string[] values = text.Split(',');
-
-            if (bool.TryParse(values[2], out bool isTurnedOn) is false)
-                return false;
-
-            if (values[0].StartsWith("SW-"))
-            {
-                if (values.Length > 4)
-                    return false;
-
-                values[3] = values[3].Remove(values[3].Length - 1);
-                createdDevice = new Smartwatch(values[0], values[1], isTurnedOn, int.Parse(values[3]));
-                return true;
-            }
-            else if (values[0].StartsWith("P-"))
-            {
-                if (values.Length > 4)
-                    return false;
-
-                string operatingSystem;
-                try
-                {
-                    operatingSystem = values[3];
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    return false;
-                }
-                createdDevice = new PersonalComputer(values[0], values[1], isTurnedOn, operatingSystem);
-                return true;
-            }
-            else if (values[0].StartsWith("ED-"))
-            {
-                if (values.Length > 5)
-                    return false;
-
-                try
-                {
-                    createdDevice = new EmbeddedDevice(values[0], values[1], isTurnedOn, values[3], values[4]);
-                    return true;
-                }
-                catch (WrongIPExcpection ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    return false;
-                }
-            }
-            return false;
         }
 
         /// <summary>
