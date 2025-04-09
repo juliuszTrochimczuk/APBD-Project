@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Devices;
 
-namespace Tests
+namespace UnitTests
 {
     public class DeviceTests
     {

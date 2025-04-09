@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Controllers;
 
-namespace Tests
+namespace UnitTests
 {
     public class DeviceManagerTests
     {
