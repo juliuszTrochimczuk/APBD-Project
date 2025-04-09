@@ -26,6 +26,23 @@ namespace Controllers
             this.fileController = fileController;
         }
 
+        public string GetDeviceData()
+        {
+            string response = "";
+            foreach (Device device in allDevices)
+            {
+                response += device.ToString() + "\n";
+            }
+            return response;
+        }
+
+        public string GetDeviceData(int index)
+        {
+            if (index >= 0 && index <= allDevices.Count)
+                return allDevices[index].ToString();
+            return "Object not found";
+        }
+
         /// <summary>
         /// Adding new device to DeviceManager
         /// </summary>
@@ -46,13 +63,32 @@ namespace Controllers
         /// <summary>
         /// Remove device from DeviceManager
         /// </summary>
-        public void RemoveDevice(Device newDevice) => allDevices.Remove(newDevice);
+        public bool TryRemoveDevice(Device newDevice)
+        {
+            if (allDevices.Contains(newDevice))
+            {
+                allDevices.Remove(newDevice);
+                return true;
+            }
+            return false;
+        }
 
         /// <summary>
         /// Remove device from DeviceManager
         /// </summary>
         /// <param name="deviceIndex">Index of device that it's stored in list</param>
-        public void RemoveDevice(int deviceIndex) => allDevices.RemoveAt(deviceIndex);
+        public bool TryRemoveDevice(int deviceIndex)
+        {
+            try
+            {
+                allDevices.RemoveAt(deviceIndex);
+                return true;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// Method used to edit device that is stored in DeviceManager
