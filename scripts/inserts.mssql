@@ -1,0 +1,51 @@
+-- Insert Devices
+INSERT INTO Device (Id, Name, IsTurnedOn) VALUES
+('D001', 'Apple Watch', 1),
+('D002', 'Samsung Gear', 1),
+('D003', 'Fitbit Versa', 0),
+('D004', 'Garmin Forerunner', 1),
+('D005', 'Huawei Watch', 0),
+('D006', 'Embedded Sensor 1', 1),
+('D007', 'Embedded Sensor 2', 0),
+('D008', 'Embedded Sensor 3', 1),
+('D009', 'Embedded Sensor 4', 1),
+('D010', 'Embedded Sensor 5', 0),
+('D011', 'Dell Laptop', 1),
+('D012', 'HP Workstation', 0),
+('D013', 'Lenovo ThinkPad', 1),
+('D014', 'Macbook Pro', 1),
+('D015', 'Asus Zenbook', 1),
+('D016', 'Surface Laptop', 0),
+('D017', 'Acer Aspire', 1),
+('D018', 'MSI Gaming Laptop', 1),
+('D019', 'Samsung Notebook', 0),
+('D020', 'Toshiba Satellite', 0);
+
+-- Insert Smartwatches
+INSERT INTO Smartwatch (Id, BatteryPercentage, DeviceId) VALUES
+(1, 85, 'D001'),
+(2, 40, 'D002'),
+(3, 70, 'D003'),
+(4, 95, 'D004'),
+(5, 20, 'D005');
+
+-- Insert Embedded Devices
+INSERT INTO EmbeddedDevice (Id, IpAddress, NetworkName, DeviceId) VALUES
+(1, '192.168.0.101', 'MD Ltd. Sensors Network', 'D006'),
+(2, '10.0.0.55', 'MD Ltd. Research Lab', 'D007'),
+(3, 'invalid-ip-address', 'MD Ltd. Test Lab', 'D008'),
+(4, '172.16.254.1', '', 'D009'),
+(5, 'not.an.ip', 'MD Ltd. Experimental Network', 'D010');
+
+-- Insert Personal Computers
+INSERT INTO PersonalComputer (Id, OperationSystem, DeviceId) VALUES
+(1, 'Windows 10', 'D011'),
+(2, null, 'D012'),
+(3, 'Ubuntu 22.04', 'D013'),
+(4, 'macOS Sonoma', 'D014'),
+(5, null, 'D015'),
+(6, 'Windows 11', 'D016'),
+(7, null, 'D017'),
+(8, 'Fedora 39', 'D018'),
+(9, null, 'D019'),
+(10, 'Ubuntu 20.04', 'D020');

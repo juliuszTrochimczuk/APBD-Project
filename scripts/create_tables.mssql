@@ -1,0 +1,27 @@
+CREATE TABLE Device (
+    Id VARCHAR(255) PRIMARY KEY,
+    Name NVARCHAR(255) NOT NULL,
+    IsTurnedOn BIT NOT NULL
+);
+
+CREATE TABLE Embedded (
+    Id INT PRIMARY KEY,
+    IpAddress VARCHAR(255) NOT NULL,
+    NetworkName VARCHAR(255) NOT NULL,
+    DeviceId VARCHAR(255) UNIQUE NOT NULL,
+    CONSTRAINT FK_Embedded_Device FOREIGN KEY (DeviceId) REFERENCES Device(Id)
+);
+
+CREATE TABLE PersonalComputer (
+    Id INT PRIMARY KEY,
+    OperationSystem VARCHAR(255),
+    DeviceId VARCHAR(255) UNIQUE NOT NULL,
+    CONSTRAINT FK_PersonalComputer_Device FOREIGN KEY (DeviceId) REFERENCES Device(Id)
+);
+
+CREATE TABLE Smartwatch (
+    Id INT PRIMARY KEY,
+    BatteryPercentage INT NOT NULL,
+    DeviceId VARCHAR(255) UNIQUE NOT NULL,
+    CONSTRAINT FK_Smartwatch_Device FOREIGN KEY (DeviceId) REFERENCES Device(Id)
+);
