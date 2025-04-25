@@ -48,15 +48,14 @@ namespace Controllers
         /// </summary>
         public void AddDevice(Device newDevice) => TryAddingDevice(newDevice);
 
-
         /// <summary>
-        /// Adding new device to DeviceManager
+        /// Using parser to create new device from string
         /// </summary>
         /// <param name="specification">Raw specification of device (like with input data)</param>
-        public void AddDevice(string specification)
+        public bool TryGetDeviceFromText(string specification, out Device parsedDevice)
         {
-            if (parser.TryParsing(specification, out Device newDevice))
-                TryAddingDevice(newDevice);
+            parser.TryParsing(specification, out parsedDevice);
+            return parsedDevice != null;
         }
 
 

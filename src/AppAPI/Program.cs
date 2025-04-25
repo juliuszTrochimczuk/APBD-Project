@@ -30,14 +30,26 @@ DeviceManager deviceManager = Factory.CreateDeviceManager(new TxtFileController(
 app.MapGet("/api/devices", () => deviceManager.AllDevices);
 app.MapGet("/api/devices/{id}", (int id) => deviceManager.GetDeviceData(id));
 
-app.MapPost("/api/devices", (Device newDevice) => 
+app.MapPost("/api/devices", (string newDevice) =>
 {
-    deviceManager.AddDevice(newDevice);
-    return Results.Created($"/api/devices/{newDevice.Id}", newDevice);
+    if (deviceManager.TryGetDeviceFromText(newDevice, out Device createdDevice))
+    {
+        deviceManager.AddDevice(createdDevice);
+        return Results.Created($"/api/devices/{createdDevice.Id}", newDevice);
+    }
+    return Results.BadRequest("Given specification is not good");
 });
 app.MapDelete("/api/devices/{id}", (int id) => deviceManager.TryRemoveDevice(id));
 
-app.MapPut("/api/devices/{id}", (int id, Device newDevice) => deviceManager.EditDeviceData(id, newDevice));
+app.MapPut("/api/devices/{id}", (int id, string newDevice) =>
+{
+    if (deviceManager.TryGetDeviceFromText(newDevice, out Device createdDevice))
+    {
+        deviceManager.EditDeviceData(id, createdDevice);
+        return Results.Accepted();
+    }
+    return Results.BadRequest("Given specification is not good");
+});
 
 
 app.Run();
