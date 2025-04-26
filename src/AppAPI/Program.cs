@@ -2,6 +2,7 @@ using Controllers;
 using Controllers.FileControllers;
 using Controllers.Parsers;
 using Devices;
+using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,9 +26,17 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-DeviceManager deviceManager = Factory.CreateDeviceManager(new TxtFileController("..\\input.txt"), new StringParser());
+DeviceManager deviceManager;
+//Device Manager based on txt file
+deviceManager = Factory.CreateDeviceManager(new TxtFileController("..\\input.txt"), new StringParser());
+//Device Manager based on mssql database
+deviceManager = Factory.CreateDeviceManager(new DBFileController(@"Server=localhost,32768;Database=master;User Id=sa;Password=Julek123!;Encrypt=False;"), new StringParser());
 
-app.MapGet("/api/devices", () => deviceManager.AllDevices);
+app.MapGet("/api/devices", () => 
+{
+    deviceManager.ShowAllDevices(out string result);
+    return result;
+});
 app.MapGet("/api/devices/{id}", (int id) => deviceManager.GetDeviceData(id));
 
 app.MapPost("/api/devices", (string newDevice) =>

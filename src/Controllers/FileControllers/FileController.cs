@@ -11,23 +11,7 @@ namespace Controllers.FileControllers
     /// </summary>
     public abstract class FileController
     {
-        protected readonly string filePath;
         protected string[] fileContent;
-
-        /// <summary>
-        /// Checks if the File Exists (if not then creates new file with approprate output to console). Reads from file to private variable
-        /// </summary>
-        /// <param name="filePath">Path to the file</param>
-        protected FileController(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
-                File.Create(filePath);
-                Console.WriteLine("New file has been created");
-            }
-            this.filePath = filePath;
-            fileContent = File.ReadAllLines(filePath);
-        }
 
         /// <summary>
         /// Gives the length of the file content

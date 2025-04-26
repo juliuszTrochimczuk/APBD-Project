@@ -19,7 +19,6 @@ namespace Controllers
         private FileController fileController;
         private IParser parser;
         private List<Device> allDevices = new();
-        public List<Device> AllDevices => allDevices;
 
         public DeviceManager(FileController fileController, IParser parser)
         {
@@ -161,6 +160,17 @@ namespace Controllers
         {
             foreach (Device device in allDevices)
                 Console.WriteLine(device.ToString());
+        }
+
+        public void ShowAllDevices(out string result)
+        {
+            result = "";
+            for (int i = 0; i < allDevices.Count; i++)
+            {
+                if (i == allDevices.Count - 1)
+                    result += allDevices[i].ToString();
+                else result += allDevices[i].ToString() + "\n";
+            }
         }
 
         /// <summary>
