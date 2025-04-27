@@ -28,29 +28,42 @@ app.UseAuthorization();
 
 DeviceManager deviceManager;
 //Device Manager based on txt file
-deviceManager = Factory.CreateDeviceManager(new TxtFileController("..\\input.txt"), new StringParser());
+//deviceManager = Factory.CreateDeviceManager(new TxtFileController("..\\input.txt"), new StringParser());
 //Device Manager based on mssql database
-deviceManager = Factory.CreateDeviceManager(new DBFileController(@"Server=localhost,32768;Database=master;User Id=sa;Password=Julek123!;Encrypt=False;"), new StringParser());
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (connectionString == null)
+{
+    Console.WriteLine("DIDN'T SPECIFI THE DEFAULT CONNECTION");
+    return;
+}
+DBFileController dbController = new DBFileController(connectionString);
+deviceManager = Factory.CreateDeviceManager(dbController, new StringParser(), dbController);
 
 app.MapGet("/api/devices", () => 
 {
-    deviceManager.ShowAllDevices(out string result);
-    return result;
+    return deviceManager.GetDeviceData();
 });
-app.MapGet("/api/devices/{id}", (int id) => deviceManager.GetDeviceData(id));
+
+app.MapGet("/api/devices/{id}", (string id) => 
+{
+    string? deviceData = deviceManager.GetDeviceData(id);
+    if (deviceData != null)
+        return deviceData;
+    return "Didn't found object with given id";
+});
 
 app.MapPost("/api/devices", (string newDevice) =>
 {
     if (deviceManager.TryGetDeviceFromText(newDevice, out Device createdDevice))
     {
-        deviceManager.AddDevice(createdDevice);
+        deviceManager.AddDevice(createdDevice, true);
         return Results.Created($"/api/devices/{createdDevice.Id}", newDevice);
     }
     return Results.BadRequest("Given specification is not good");
 });
-app.MapDelete("/api/devices/{id}", (int id) => deviceManager.TryRemoveDevice(id));
+app.MapDelete("/api/devices/{id}", (string id) => deviceManager.TryRemoveDevice(id));
 
-app.MapPut("/api/devices/{id}", (int id, string newDevice) =>
+app.MapPut("/api/devices/{id}", (string id, string newDevice) =>
 {
     if (deviceManager.TryGetDeviceFromText(newDevice, out Device createdDevice))
     {
@@ -59,6 +72,5 @@ app.MapPut("/api/devices/{id}", (int id, string newDevice) =>
     }
     return Results.BadRequest("Given specification is not good");
 });
-
 
 app.Run();

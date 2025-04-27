@@ -19,9 +19,9 @@ namespace Controllers
         /// </summary>
         /// <param name="fileController">Instance of file Controller that Device Manager will be using</param>
         /// <returns></returns>
-        public static DeviceManager CreateDeviceManager(FileController fileController, IParser parser)
+        public static DeviceManager CreateDeviceManager(FileController fileController, IParser parser, IDatabaseHandler? databaseHandler)
         {
-            DeviceManager deviceManager = new(fileController, parser);
+            DeviceManager deviceManager = new(fileController, parser, databaseHandler);
             for (int i = 0; i < fileController.FileLinesCount(); i++)
             {
                 try

@@ -16,13 +16,15 @@ namespace Controllers
     /// </summary>
     public class DeviceManager
     {
-        private FileController fileController;
-        private IParser parser;
-        private List<Device> allDevices = new();
+        private readonly FileController fileController;
+        private readonly IParser parser;
+        private readonly IDatabaseHandler? databaseHandler;
+        private readonly List<Device> allDevices = new();
 
-        public DeviceManager(FileController fileController, IParser parser)
+        public DeviceManager(FileController fileController, IParser parser, IDatabaseHandler? databaseHandler)
         {
             this.fileController = fileController;
+            this.databaseHandler = databaseHandler;
         }
 
         public string GetDeviceData()
@@ -35,17 +37,29 @@ namespace Controllers
             return response;
         }
 
-        public string GetDeviceData(int index)
+        public string? GetDeviceData(string id)
         {
-            if (index >= 0 && index <= allDevices.Count)
-                return allDevices[index].ToString();
-            return "Object not found";
+            Device? foundDevice = allDevices.Find((device) => device.Id == id);
+            if (foundDevice == null)
+                return null;
+            return foundDevice.ToString();
         }
 
         /// <summary>
         /// Adding new device to DeviceManager
         /// </summary>
         public void AddDevice(Device newDevice) => TryAddingDevice(newDevice);
+
+        /// <summary>
+        /// Adding new device to DeviceManager
+        /// </summary>
+        /// <param name="saveToDB">Check to specifi when you need explicity make insert statement</param>
+        public void AddDevice(Device newDevice, bool saveToDB)
+        {
+            TryAddingDevice(newDevice);
+            if (saveToDB && databaseHandler != null)
+                databaseHandler.AddDevice(newDevice);
+        }
 
         /// <summary>
         /// Using parser to create new device from string
@@ -74,40 +88,42 @@ namespace Controllers
         /// <summary>
         /// Remove device from DeviceManager
         /// </summary>
-        /// <param name="deviceIndex">Index of device that it's stored in list</param>
-        public bool TryRemoveDevice(int deviceIndex)
+        /// <param name="deviceId">Index of device that it's stored in list</param>
+        public bool TryRemoveDevice(string deviceId)
         {
-            try
-            {
-                allDevices.RemoveAt(deviceIndex);
-                return true;
-            }
-            catch (IndexOutOfRangeException)
-            {
+            Device? foundDevice = allDevices.Find((device) => device.Id ==  deviceId);
+            if (foundDevice == null) 
                 return false;
-            }
+            allDevices.Remove(foundDevice);
+            if (databaseHandler != null)
+                databaseHandler.DeleteDevice(foundDevice);
+            return true;
         }
 
         /// <summary>
         /// Method used to edit device that is stored in DeviceManager
         /// </summary>
-        /// <param name="deviceIndex">Index of device that it's stored in list</param>
+        /// <param name="deviceId">Index of device that it's stored in list</param>
         /// <param name="template">New Device that contains all of new informations to edit</param>
-        public void EditDeviceData(int deviceIndex, Device template)
+        public bool EditDeviceData(string deviceId, Device template)
         {
+            Device? foundDevice = allDevices.Find((device) => device.Id == deviceId);
+            if (foundDevice == null)
+                return false;
+
             if (template is Smartwatch sw)
             {
-                Smartwatch targetSW = (Smartwatch)allDevices[deviceIndex];
+                Smartwatch targetSW = (Smartwatch)foundDevice;
                 targetSW.BatteryLevel = sw.BatteryLevel;
             }
             else if (template is PersonalComputer pc)
             {
-                PersonalComputer targetPC = (PersonalComputer)allDevices[deviceIndex];
+                PersonalComputer targetPC = (PersonalComputer)foundDevice;
                 targetPC.OperatingSystem = pc.OperatingSystem;
             }
             else if (template is EmbeddedDevice ed)
             {
-                EmbeddedDevice targetED = (EmbeddedDevice)allDevices[deviceIndex];
+                EmbeddedDevice targetED = (EmbeddedDevice)foundDevice;
                 try
                 {
                     targetED.IpAdress = ed.IpAdress;
@@ -118,9 +134,12 @@ namespace Controllers
                 }
                 targetED.NetworkName = ed.NetworkName;
             }
-            allDevices[deviceIndex].Id = template.Id;
-            allDevices[deviceIndex].Name = template.Name;
-            allDevices[deviceIndex].IsTurnedOn = template.IsTurnedOn;
+            foundDevice.Name = template.Name;
+            foundDevice.IsTurnedOn = template.IsTurnedOn;
+
+            if (databaseHandler != null)
+                databaseHandler.UpdateDevice(foundDevice);
+            return true;
         }
 
         /// <summary>
@@ -152,26 +171,6 @@ namespace Controllers
         /// </summary>
         /// <param name="deviceIndex">Index of the device that it's stored in the list</param>
         public void TurnOffDevice(int deviceIndex) => allDevices[deviceIndex].TurnOff();
-
-        /// <summary>
-        /// Show all of the devices that DeviceManager contains
-        /// </summary>
-        public void ShowAllDevices()
-        {
-            foreach (Device device in allDevices)
-                Console.WriteLine(device.ToString());
-        }
-
-        public void ShowAllDevices(out string result)
-        {
-            result = "";
-            for (int i = 0; i < allDevices.Count; i++)
-            {
-                if (i == allDevices.Count - 1)
-                    result += allDevices[i].ToString();
-                else result += allDevices[i].ToString() + "\n";
-            }
-        }
 
         /// <summary>
         /// Save all of the connected devices to the file (the same one as the date was read from)
