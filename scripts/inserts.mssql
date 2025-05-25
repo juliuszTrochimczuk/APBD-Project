@@ -1,0 +1,54 @@
+-- Insert Devices with new ID format
+INSERT INTO Device (Id, Name, IsTurnedOn) VALUES
+-- Smartwatches (SW- prefix)
+('SW-427', 'Apple Watch', 1),
+('SW-156', 'Samsung Gear', 1),
+('HJLHVM', 'Fitbit Versa', 0),
+('SW-642', 'Garmin Forerunner', 1),
+('SW-319', 'Huawei Watch', 0),
+-- Embedded Devices (ED- prefix)
+('ED-758', 'Embedded Sensor 1', 1),
+('GHMK', 'Embedded Sensor 2', 0),
+('ED-964', 'Embedded Sensor 3', 1),
+('ED-507', 'Embedded Sensor 4', 1),
+('ED-182', 'Embedded Sensor 5', 0),
+-- Personal Computers (P- prefix)
+('P-645', 'Dell Laptop', 1),
+('P-382', 'HP Workstation', 0),
+('P-129', 'Lenovo ThinkPad', 1),
+('P-876', 'Macbook Pro', 1),
+('POL', 'Asus Zenbook', 1),
+('P-210', 'Surface Laptop', 0),
+('P-987', 'Acer Aspire', 1),
+('P-534', 'MSI Gaming Laptop', 1),
+('P-301', 'Samsung Notebook', 0),
+('P-768', 'Toshiba Satellite', 0);
+
+-- Insert Smartwatches with new DeviceId format
+INSERT INTO Smartwatch (Id, BatteryPercentage, DeviceId) VALUES
+(1, 85, 'SW-427'),
+(2, 40, 'SW-156'),
+(3, 70, 'HJLHVM'),
+(4, 95, 'SW-642'),
+(5, 20, 'SW-319');
+
+-- Insert Embedded Devices with new DeviceId format
+INSERT INTO EmbeddedDevice (Id, IpAddress, NetworkName, DeviceId) VALUES
+(1, '192.168.0.101', 'MD Ltd. Sensors Network', 'ED-758'),
+(2, '10.0.0.55', 'MD Ltd. Research Lab', 'GHMK'),
+(3, 'invalid-ip-address', 'MD Ltd. Test Lab', 'ED-964'),
+(4, '172.16.254.1', '', 'ED-507'),
+(5, 'not.an.ip', 'MD Ltd. Experimental Network', 'ED-182');
+
+-- Insert Personal Computers with new DeviceId format
+INSERT INTO PersonalComputer (Id, OperationSystem, DeviceId) VALUES
+(1, 'Windows 10', 'P-645'),
+(2, null, 'P-382'),
+(3, 'Ubuntu 22.04', 'P-129'),
+(4, 'macOS Sonoma', 'P-876'),
+(5, null, 'POL'),
+(6, 'Windows 11', 'P-210'),
+(7, null, 'P-987'),
+(8, 'Fedora 39', 'P-534'),
+(9, null, 'P-301'),
+(10, 'Ubuntu 20.04', 'P-768');
